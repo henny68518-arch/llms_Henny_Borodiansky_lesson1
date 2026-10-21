@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+server.log
+myApp/node_modules/
+myApp/dist/
+myApp/.angular/
+myApp/.git-backup/

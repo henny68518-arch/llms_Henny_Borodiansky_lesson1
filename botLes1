@@ -1,0 +1,21 @@
+from openai import OpenAI
+import httpx
+
+API_KEY="sk-safeai-dfa2d649b8d1b5c974a5f72e97575e3d6b604d5f7ade2ce1"
+
+BASE_URL = "https://safeai613.com/v1"
+
+httpx_client = httpx.Client(http2=True, verify=False)
+
+client = OpenAI(
+    base_url=BASE_URL,
+    api_key=API_KEY,
+    http_client=httpx_client
+)
+
+response = client.responses.create(
+    model="gpt-4o-mini",
+    input="Create a homepage for my website with a CSs tailwind style design"
+)
+
+print(response.output_text)

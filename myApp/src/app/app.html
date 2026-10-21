@@ -1,0 +1,88 @@
+<div class="page">
+  <div class="page__glow" aria-hidden="true"></div>
+
+  <header class="masthead">
+    <div class="masthead__left">
+      <span class="pill">
+        <span class="pill__dot" [class.pill__dot--busy]="isSending()"></span>
+        {{ isSending() ? 'ממתין לתשובה' : 'פעיל' }}
+      </span>
+      <span class="masthead__sep"></span>
+      <span class="masthead__count">{{ messages().length }} הודעות</span>
+    </div>
+
+    <div class="masthead__center">
+      <h1 class="masthead__title">חדר השיחות</h1>
+      <p class="masthead__subtitle">שיחה עם העוזר החכם</p>
+    </div>
+
+    <div class="masthead__right">
+      <button type="button" class="ghost-btn" (click)="clear()" [disabled]="isSending()">
+        התחל מחדש
+      </button>
+    </div>
+  </header>
+
+  <main class="stream">
+    <div class="stream__inner">
+      @for (message of messages(); track $index; let i = $index) {
+        <div class="msg" [class.msg--user]="message.role === 'user'"
+             [class.msg--assistant]="message.role === 'assistant'">
+          <div class="msg__head">
+            <span class="msg__badge">{{ message.role === 'user' ? 'א' : 'ע' }}</span>
+            <span class="msg__name">{{ message.role === 'user' ? 'אתה' : 'העוזר' }}</span>
+            <span class="msg__num">#{{ i + 1 }}</span>
+          </div>
+
+          <div class="msg__bubble">
+            @if (message.text) {
+              <p class="msg__text">{{ message.text }}</p>
+            } @else {
+              <span class="typing">
+                <span></span><span></span><span></span>
+              </span>
+            }
+          </div>
+        </div>
+      } @empty {
+        <div class="start">
+          <div class="start__ring" aria-hidden="true"></div>
+          <p class="start__title">מוכן לשיחה</p>
+          <p class="start__hint">כתוב את ההודעה הראשונה בתיבה שלמטה.</p>
+        </div>
+      }
+    </div>
+  </main>
+
+  <div class="foot">
+    @if (errorText()) {
+      <div class="error">
+        <span class="error__dot"></span>
+        <span class="error__text">{{ errorText() }}</span>
+      </div>
+    }
+
+    <form class="composer" (ngSubmit)="send()">
+      <div class="composer__box">
+        <textarea
+          #draftInput
+          class="composer__input"
+          name="draft"
+          rows="1"
+          [ngModel]="draft()"
+          (ngModelChange)="setDraft($event)"
+          (keydown)="onKeydown($event)"
+          placeholder="כתוב כאן את ההודעה שלך... (Enter לשליחה, Shift+Enter לשורה חדשה)"
+          autocomplete="off"
+          [disabled]="isSending()"
+        ></textarea>
+        <button type="submit" class="composer__btn" [disabled]="isSending() || !draft().trim()">
+          <span>{{ isSending() ? 'שולח' : 'שלח' }}</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M21 12 3 4l3.5 8L3 20z" />
+          </svg>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
